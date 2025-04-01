@@ -9,7 +9,7 @@ jobs:
     - run: echo "the job was automatic triggered by a ${{ github.event_name }} evente."
     - run: echo " this job is now runnig on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo " the name of your branch is ${{ github.ref }} and your repository is ${{github.repository"
-    - name: checl out repository code 
+    - name: check out repository code 
       uses: actions/checkout@v4
     - run: echo " the ${{github.repository}} repositoryhas been cloned to the runner."
     - run: echo " the worflow is now ready to test your code ont the runner."
