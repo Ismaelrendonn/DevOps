@@ -6,7 +6,7 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu.latest
     steps: 
-    - run: echo "the job was automatic triggered by a ${{ github.event_name }} event."
+    - run: echo "the job was automatic triggered by a ${{ github.event_name }} eventt."
     - run: echo " this job is now runnig on a ${{ runner.os }} server hosted by GitHub!"
     - run: echo " the name of your branch is ${{ github.ref }} and your repository is ${{github.repository}}"
     - name: check out repository code 
