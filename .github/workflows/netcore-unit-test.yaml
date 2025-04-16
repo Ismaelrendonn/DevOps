@@ -1,52 +1,24 @@
-name: CI - Unit Tests
+name: Unit Tests
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-
-      - name: Find solution file
-        id: find-sln
+      
+      - name: Run tests
         run: |
-          echo "Buscando archivo .sln..."
-          SOLUTION_PATH=$(find . -name "*.sln" -print -quit)
-          echo "solution_path=${SOLUTION_PATH}" >> $GITHUB_OUTPUT
-          echo "Solución encontrada: ${SOLUTION_PATH}"
-
-      - name: Restore dependencies
-        run: dotnet restore ${{ steps.find-sln.outputs.solution_path }}
-
-      - name: Build solution
-        run: dotnet build ${{ steps.find-sln.outputs.solution_path }} --configuration Release --no-restore
-
-      - name: Find test project
-        id: find-test
-        run: |
-          echo "Buscando proyecto de pruebas..."
-          TEST_PROJECT=$(find . -name "*Test*.csproj" -print -quit)
-          echo "test_project=${TEST_PROJECT}" >> $GITHUB_OUTPUT
-          echo "Proyecto de pruebas encontrado: ${TEST_PROJECT}"
-
-      - name: Run unit tests
-        run: dotnet test ${{ steps.find-test.outputs.test_project }} --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
-
-      - name: Upload test results
+          cd ./petcore/ExploringActions
+          dotnet test --configuration Release --logger "trx;LogFileName=TestResults.trx"
+      
+      - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: UnitTestResults
-          path: '**/TestResults/TestResults.trx'
+          name: test-results
+          path: ./petcore/ExploringActions/**/TestResults/*.trx
