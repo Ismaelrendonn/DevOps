@@ -1,36 +1,37 @@
-name: Pruebas Unitarias .NET Core
+name: CI - Unit Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  ejecutar-pruebas:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Descargar código del repositorio
-      uses: actions/checkout@v4
+      - name: Check out repository code
+        uses: actions/checkout@v2
 
-    - name: Configurar .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.x'
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
 
-    - name: Restaurar dependencias
-      run: dotnet restore ./anuncios/
+      - name: Restore dependencies
+        run: dotnet restore ./netcore/ExploringSoft/ExploringSoft.sln
 
-    - name: Compilar proyecto
-      run: dotnet build ./anuncios/ --configuration Release --no-restore
+      - name: Build the solution
+        run: dotnet build ./netcore/ExploringSoft/ExploringSoft.sln --configuration Release --no-restore
 
-    - name: Ejecutar pruebas unitarias
-      run: dotnet test ./anuncios/ --configuration Release --no-build --logger "trx;LogFileName=ResultadosPruebas.trx"
-
-    - name: Subir resultados de pruebas
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: resultados-pruebas-unitarias
-        path: ./anuncios/**/TestResults/ResultadosPruebas.trx
+      - name: Run unit tests with report
+        run: dotnet test ./netcore/ExploringSoft/TestExploringSoftApi/TestExploringSoftApi.csproj --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
+        
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: ./netcore/ExploringSoft/TestExploringSoftApi/TestResults/TestResults.trx
